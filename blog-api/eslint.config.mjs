@@ -11,5 +11,5 @@ export default [
   { languageOptions: { globals: globals.browser } },
   pluginJs.configs.recommended, eslint.configs.recommended,
   ...tseslint.configs.recommended, eslintPluginPrettierRecommended,
-  { ignores: [".node_modules/", ".dist/"] }
+  { ignores: [".node_modules/", ".dist/", "eslint.config.mjs"] }
 ];
