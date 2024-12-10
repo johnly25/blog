@@ -3,6 +3,10 @@ import session from './config/session'
 import passport from 'passport'
 import localStrategy from './config/passport'
 import { PrismaClient } from '@prisma/client'
+import userRouter from './routes/userRoutes'
+
+const router = { userRouter }
+
 const prisma = new PrismaClient()
 const app = express()
 const port = process.env.PORT || '3000'
@@ -38,6 +42,8 @@ passport.deserializeUser(async (id, done) => {
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
+
+app.use('/user', router.userRouter)
 
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`)
