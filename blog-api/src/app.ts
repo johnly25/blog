@@ -4,6 +4,7 @@ import passport from 'passport'
 import localStrategy from './config/passport'
 import { PrismaClient } from '@prisma/client'
 import userRouter from './routes/userRoutes'
+import { errorHandler } from './middleware/errorhandler'
 
 const router = { userRouter }
 
@@ -44,6 +45,8 @@ app.get('/', (req, res) => {
 })
 
 app.use('/user', router.userRouter)
+
+app.use(errorHandler)
 
 app.listen(port, () => {
     return console.log(`Express is listening at http://localhost:${port}`)

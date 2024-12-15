@@ -1,6 +1,10 @@
-import { Router } from 'express'
+import express from 'express'
+import UserService from '../services/userService'
+import * as repository from '../prisma/repository'
+import 'express-async-errors'
+const userService = new UserService(repository)
 
-const router = Router()
+const router = express.Router()
 
 //read
 router.get('/', (req, res) => {
@@ -8,8 +12,11 @@ router.get('/', (req, res) => {
 })
 
 //create
-router.post('/', (req, res) => {
-    return res.send('POST HTTP method on user resource')
+router.post('/', async (req, res) => {
+    const userInfo = req.body
+    console.log('calling post function')
+    const user = await userService.createUser(userInfo)
+    return res.json(user)
 })
 
 //read
