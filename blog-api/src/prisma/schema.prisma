@@ -20,14 +20,14 @@ model User {
   username String    @unique
   password String
   Comment  Comment[]
-  Author   Author?
+  author Author?
 }
 
 model Author {
   id     Int    @id @default(autoincrement())
-  userId Int    @unique
-  user   User   @relation(fields: [userId], references: [id])
   posts  Post[]
+  userId Int @unique
+  user User @relation(fields:[userId], references: [id])
 }
 
 model Post {

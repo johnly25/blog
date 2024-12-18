@@ -13,10 +13,8 @@ const prisma = new PrismaClient({
         },
     },
 })
-console.log(databaseUrl)
 
 export const createUser = async (fullname, email, username, password) => {
-    console.log(databaseUrl)
     const user = await prisma.user.create({
         data: {
             fullname: fullname,
@@ -25,7 +23,34 @@ export const createUser = async (fullname, email, username, password) => {
             password: password,
         },
     })
-    console.log('asdifljalskjflkajsld')
-    console.log(user)
+    return user
+}
+
+export const getUser = async (userid: number) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userid,
+        },
+        include: {
+            Author: true,
+        },
+    })
+    return user
+}
+
+export const addAuthor = async (userid: number) => {
+    const user = await prisma.user.update({
+        where: {
+            id: userid,
+        },
+        data: {
+            Author: {
+                create: {},
+            },
+        },
+        include: {
+            Author: true,
+        },
+    })
     return user
 }

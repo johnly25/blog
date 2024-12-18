@@ -3,10 +3,13 @@ export default class UserService {
     constructor(repository) {
         this.repository = repository
     }
+    async addAuthor(userid: number) {
+        const user = await this.repository.addAuthor(userid)
+        return user
+    }
 
     async createUser(userInfo) {
         const { firstname, lastname, username, password, email } = userInfo
-        console.log(firstname + lastname, username, password, email)
         const fullname = firstname + ' ' + lastname
         const user = await this.repository.createUser(
             fullname,
@@ -16,7 +19,11 @@ export default class UserService {
         )
         return user
     }
-    // read user
+
+    async getUser(userid: number) {
+        const user = await this.repository.getUser(userid)
+        return user
+    }
     // update user
     // delete user
 }

@@ -14,14 +14,21 @@ router.get('/', (req, res) => {
 //create
 router.post('/', async (req, res) => {
     const userInfo = req.body
-    console.log('calling post function')
     const user = await userService.createUser(userInfo)
+    const addAuthor = req.body.author === 'true'
+    if (addAuthor) {
+        const userid = user.id
+        const user2 = await userService.addAuthor(userid)
+        return res.json(user2)
+    }
     return res.json(user)
 })
 
 //read
-router.get('/:userId', (req, res) => {
-    return res.send('GET HTTP method on user resource')
+router.get('/:userId', async (req, res) => {
+    const userid = Number(req.params.userId)
+    const user = await userService.getUser(userid)
+    return res.send(user)
 })
 
 //update
