@@ -1,26 +1,26 @@
 import express from 'express'
 import UserService from '../services/userService'
 import * as repository from '../prisma/repository'
+import * as bcrypt from '../services/bcryptService'
 import 'express-async-errors'
 const userService = new UserService(repository)
 
 const router = express.Router()
 
-//read
-router.get('/', (req, res) => {
-    return res.send('GET HTTP method on user resource')
-})
-
 //create
 router.post('/', async (req, res) => {
-    const userInfo = req.body
-    const user = await userService.createUser(userInfo)
-    const addAuthor = req.body.author === 'true'
-    if (addAuthor) {
-        const userid = user.id
-        const user2 = await userService.addAuthor(userid)
-        return res.json(user2)
-    }
+    const { firstname, lastname, username, password, email, author } = req.body
+    console.log(firstname, lastname, username, password, email, author)
+    const hashPassword = await bcrypt.hashPassword(password)
+    console.log(hashPassword)
+    const user = await userService.createUser(
+        firstname,
+        lastname,
+        username,
+        hashPassword,
+        email,
+        author,
+    )
     return res.json(user)
 })
 

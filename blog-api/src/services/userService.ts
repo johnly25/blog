@@ -8,8 +8,7 @@ export default class UserService {
         return user
     }
 
-    async createUser(userInfo) {
-        const { firstname, lastname, username, password, email } = userInfo
+    async createUser(firstname, lastname, username, password, email, author) {
         const fullname = firstname + ' ' + lastname
         const user = await this.repository.createUser(
             fullname,
@@ -17,6 +16,12 @@ export default class UserService {
             username,
             password,
         )
+        const addAuthor = author === 'true'
+        if (addAuthor) {
+            const userid = user.id
+            const user2 = await this.addAuthor(userid)
+            return user2
+        }
         return user
     }
 

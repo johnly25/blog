@@ -15,6 +15,5 @@ const sessionOptions = {
         dbRecordIdFunction: undefined,
     }),
 }
-
 const sessionInstance = session(sessionOptions)
 export default sessionInstance

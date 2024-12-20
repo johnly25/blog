@@ -1,52 +1,49 @@
-import LocalStrategy from 'passport-local'
-import bcrypt from 'bcryptjs'
+import { Strategy as LocalStrategy } from 'passport-local'
+import { comparePassword } from '../services/bcryptService'
+
 import { PrismaClient } from '@prisma/client'
+import passport from 'passport'
 const prisma = new PrismaClient()
 
-const localStrategy = new LocalStrategy(async (username, password, done) => {
+passport.use(
+    new LocalStrategy(async (username, password, done) => {
+        try {
+            console.log('we made it here')
+            const user = await prisma.user.findUnique({
+                where: {
+                    username: username,
+                },
+            })
+            if (!user) {
+                return done(null, false, { message: 'Incorrect username.' })
+            }
+            const validPassword = await comparePassword(password, user.password)
+            if (!validPassword) {
+                console.log('incorrect pw')
+                return done(null, false, { message: 'Incorrect password.' })
+            }
+            return done(null, user)
+        } catch (err) {
+            done(err, null)
+        }
+    }),
+)
+
+passport.serializeUser((user: any, done) => {
+    done(null, user.id)
+})
+
+passport.deserializeUser(async (id: any, done) => {
     try {
-        const user = await prisma.user.findFirst({
+        const user = await prisma.user.findUnique({
             where: {
-                username: username,
+                id: id,
             },
         })
-        if (!user) {
-            return done(null, false, { message: 'Incorrect username' })
-        }
-
-        const match = await bcrypt.compare(password, user.password)
-        if (!match) {
-            return done(null, false, { message: 'Incorrect password' })
-        }
-        return done(null, user)
+        done(null, user)
     } catch (err) {
-        return done(err)
+        done(err)
     }
 })
 
-export default localStrategy
-// export default passport => {
-// passport.use(localStrategy)
-
-// passport.serializeUser((user, done) => {
-//     done(null, user.id)
-// })
-
-// passport.deserializeUser(async (id, done) => {
-//     try {
-//         const user = await prisma.user.findUnique({
-//             where: {
-//                 id: id,
-//             },
-//             select: {
-//                 id: true,
-//                 fullname: true,
-//                 username: true,
-//             },
-//         })
-//         done(null, user)
-//     } catch (err) {
-//         done(err)
-//     }
-// })
-// }
+export default passport

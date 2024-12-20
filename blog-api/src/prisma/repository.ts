@@ -32,7 +32,7 @@ export const getUser = async (userid: number) => {
             id: userid,
         },
         include: {
-            Author: true,
+            author: true,
         },
     })
     return user
@@ -44,12 +44,12 @@ export const addAuthor = async (userid: number) => {
             id: userid,
         },
         data: {
-            Author: {
+            author: {
                 create: {},
             },
         },
         include: {
-            Author: true,
+            author: true,
         },
     })
     return user
