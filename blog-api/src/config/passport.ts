@@ -8,7 +8,6 @@ const prisma = new PrismaClient()
 passport.use(
     new LocalStrategy(async (username, password, done) => {
         try {
-            console.log('we made it here')
             const user = await prisma.user.findUnique({
                 where: {
                     username: username,
@@ -19,7 +18,6 @@ passport.use(
             }
             const validPassword = await comparePassword(password, user.password)
             if (!validPassword) {
-                console.log('incorrect pw')
                 return done(null, false, { message: 'Incorrect password.' })
             }
             return done(null, user)

@@ -1,18 +1,8 @@
-import { test, expect, afterAll } from 'vitest'
-import userRouter from './userRoutes'
-import 'express-async-errors'
+import { test, expect, afterAll, beforeEach } from 'vitest'
 import request from 'supertest'
-import express from 'express'
-import { beforeEach } from 'vitest'
-import { errorHandler } from '../middleware/errorhandler'
 import { PrismaClient } from '@prisma/client'
-
-import * as bycrpt from '../services/bcryptService'
-
-const app = express()
-app.use(express.urlencoded({ extended: false }))
-app.use('/user', userRouter)
-app.use(errorHandler)
+import * as bcrypt from '../services/bcryptService'
+import app from '../app-loader'
 
 const prisma = new PrismaClient({
     datasources: {
@@ -29,10 +19,6 @@ const clearDB = async () => {
     await prisma.comment.deleteMany()
 }
 
-beforeEach(async () => {
-    await clearDB()
-})
-
 afterAll(async () => {
     await clearDB()
 })
@@ -46,7 +32,6 @@ test('POST a /user', async () => {
         password: '123',
         author: 'false',
     })
-    console.log('response', response.body)
     expect(response.body).toHaveProperty('id')
     expect(response.body).toHaveProperty('username')
     expect(response.body).toHaveProperty('fullname')
@@ -57,12 +42,11 @@ test('POST /user with author ', async () => {
     const response = await request(app).post('/user').type('form').send({
         firstname: 'john',
         lastname: 'nguyen',
-        username: 'kazuha',
+        username: 'kazuha2',
         email: 'jayennguyen@gmail.com',
         password: '123',
         author: 'true',
     })
-    console.log('response', response.body)
     expect(response.body).toHaveProperty('id')
     expect(response.body).toHaveProperty('username')
     expect(response.body).toHaveProperty('fullname')
@@ -76,7 +60,7 @@ test('POST duplicate username /user', async () => {
         .send({
             firstname: 'john',
             lastname: 'nguyen',
-            username: 'kazuha',
+            username: 'kazuha3',
             email: 'jayennguyen@gmail.com',
             password: '123',
             author: false,
@@ -89,7 +73,7 @@ test('POST duplicate username /user', async () => {
         .send({
             firstname: 'john',
             lastname: 'nguyen',
-            username: 'kazuha',
+            username: 'kazuha3',
             email: 'jayennguyen@gmail.com',
             password: '123',
             author: false,
@@ -104,7 +88,7 @@ test(`GET /user that is an author /user/:userid`, async () => {
     const response = await request(app).post('/user').type('form').send({
         firstname: 'john',
         lastname: 'nguyen',
-        username: 'kazuha',
+        username: 'kazuha5',
         email: 'jayennguyen@gmail.com',
         password: '123',
         author: true,
@@ -122,7 +106,7 @@ test(`GET /user that's not a author /user/:userid`, async () => {
     const response = await request(app).post('/user').type('form').send({
         firstname: 'john',
         lastname: 'nguyen',
-        username: 'kazuha',
+        username: 'kazuha6',
         email: 'jayennguyen@gmail.com',
         password: '123',
         author: false,
@@ -135,11 +119,12 @@ test(`GET /user that's not a author /user/:userid`, async () => {
     expect(response2.body).toHaveProperty('fullname')
     expect(response2.body).toHaveProperty('author', null)
 })
+
 test('POST /user should have hashed password', async () => {
     const form = {
         firstname: 'john',
         lastname: 'nguyen',
-        username: 'kazuha',
+        username: 'kazuha7',
         email: 'jayennguyen@gmail.com',
         password: '123',
         author: false,
@@ -149,7 +134,7 @@ test('POST /user should have hashed password', async () => {
     expect(response.status).toEqual(200)
     expect(response.status).toEqual(200)
     expect(
-        await bycrpt.comparePassword(form.password, user.password),
+        await bcrypt.comparePassword(form.password, user.password),
     ).toBeTruthy()
 })
 

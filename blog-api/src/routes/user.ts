@@ -7,12 +7,9 @@ const userService = new UserService(repository)
 
 const router = express.Router()
 
-//create
 router.post('/', async (req, res) => {
     const { firstname, lastname, username, password, email, author } = req.body
-    console.log(firstname, lastname, username, password, email, author)
     const hashPassword = await bcrypt.hashPassword(password)
-    console.log(hashPassword)
     const user = await userService.createUser(
         firstname,
         lastname,
