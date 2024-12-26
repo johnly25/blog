@@ -1,13 +1,11 @@
-/* eslint-disable prettier/prettier */
 import express from 'express'
 import 'express-async-errors'
 import passport from 'passport'
-
 const router = express.Router()
 
 router.get('/', (req, res) => {
     if (req.user) {
-       return res.send(req.user)
+        return res.send(req.user)
     }
     return res.send('GET HTTP method on user asdfjlsakjdflsaj')
 })

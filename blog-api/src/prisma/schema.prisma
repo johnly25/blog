@@ -35,7 +35,7 @@ model Post {
   title     String
   body      String
   published Boolean
-  createdAt DateTime
+  createdAt DateTime @default(now())
   authorid  Int
   author    Author   @relation(fields: [authorid], references: [id])
 }

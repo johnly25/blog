@@ -14,6 +14,31 @@ const prisma = new PrismaClient({
     },
 })
 
+export const clearDB = async () => {
+    await prisma.post.deleteMany()
+    await prisma.author.deleteMany()
+    await prisma.user.deleteMany()
+    await prisma.comment.deleteMany()
+}
+
+export const getPosts = async (authorid) => {
+    const posts = await prisma.post.findMany({
+        where: { authorid }
+    })
+    return posts
+}
+export const createPost = async (authorid, title, body, published) => {
+    const post = await prisma.post.create({
+        data: {
+            title: title,
+            body: body,
+            published: published,
+            authorid: authorid,
+        },
+    })
+    return post
+}
+
 export const createUser = async (fullname, email, username, password) => {
     const user = await prisma.user.create({
         data: {
@@ -30,6 +55,18 @@ export const getUser = async (userid: number) => {
     const user = await prisma.user.findUnique({
         where: {
             id: userid,
+        },
+        include: {
+            author: true,
+        },
+    })
+    return user
+}
+
+export const getUserByUsername = async (username: string) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            username: username,
         },
         include: {
             author: true,

@@ -24,20 +24,21 @@ beforeEach(async () => {
     await clearDB()
 })
 
-let base = 'http://localhost';
-let server;
+let base = 'http://localhost'
+let server
 
 //dynamically create servers
+//inconsistent for tests
 beforeAll(() => {
     server = http.createServer(app)
     server = server.listen(0, () => {
-        base += `:${server.address().port}`;
+        base += `:${server.address().port}`
     })
 })
 
 afterAll(() => {
-    server.close();
-});
+    server.close()
+})
 
 beforeAll(async () => {
     await clearDB()
@@ -48,37 +49,30 @@ describe('persistent agent', () => {
     const agent2 = request.agent()
 
     test('testing', async () => {
-        const res = await agent1
-            .post(`${base}/user`)
-            .type('form')
-            .send({
-                firstname: 'john',
-                lastname: 'nguyen',
-                username: 'kazuha',
-                email: 'jayennguyen@gmail.com',
-                password: '123',
-                author: 'false',
-            })
+        const res = await agent1.post(`${base}/users`).type('form').send({
+            firstname: 'john',
+            lastname: 'nguyen',
+            username: 'kazuha',
+            email: 'jayennguyen@gmail.com',
+            password: '123',
+            author: 'false',
+        })
         const res2 = await agent1
             .post(`${base}/login/password`)
-            .send({ username: "kazuha", password: '123' })
+            .send({ username: 'kazuha', password: '123' })
     })
+
     test('testing agent2', async () => {
-        const res = await agent2
-            .post(`${base}/user`)
-            .type('form')
-            .send({
-                firstname: 'john',
-                lastname: 'nguyen',
-                username: 'kazuha2',
-                email: 'jayennguyen@gmail.com',
-                password: '123',
-                author: 'false',
-            })
+        const res = await agent2.post(`${base}/users`).type('form').send({
+            firstname: 'john',
+            lastname: 'nguyen',
+            username: 'kazuha2',
+            email: 'jayennguyen@gmail.com',
+            password: '123',
+            author: 'false',
+        })
         const res2 = await agent2
             .post(`${base}/login/password`)
-            .send({ username: "kazuha2", password: '123' })
+            .send({ username: 'kazuha2', password: '123' })
     })
 })
-
-

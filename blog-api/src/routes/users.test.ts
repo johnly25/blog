@@ -23,8 +23,8 @@ afterAll(async () => {
     await clearDB()
 })
 
-test('POST a /user', async () => {
-    const response = await request(app).post('/user').type('form').send({
+test('POST a /users', async () => {
+    const response = await request(app).post('/users').type('form').send({
         firstname: 'john',
         lastname: 'nguyen',
         username: 'kazuha',
@@ -38,8 +38,8 @@ test('POST a /user', async () => {
     expect(response.body).not.toHaveProperty('author')
 })
 
-test('POST /user with author ', async () => {
-    const response = await request(app).post('/user').type('form').send({
+test('POST /users with author ', async () => {
+    const response = await request(app).post('/users').type('form').send({
         firstname: 'john',
         lastname: 'nguyen',
         username: 'kazuha2',
@@ -53,9 +53,9 @@ test('POST /user with author ', async () => {
     expect(response.body).toHaveProperty('author')
 })
 
-test('POST duplicate username /user', async () => {
+test('POST duplicate username /users', async () => {
     await request(app)
-        .post('/user')
+        .post('/users')
         .type('form')
         .send({
             firstname: 'john',
@@ -68,7 +68,7 @@ test('POST duplicate username /user', async () => {
         .expect(200)
 
     return request(app)
-        .post('/user')
+        .post('/users')
         .type('form')
         .send({
             firstname: 'john',
@@ -84,8 +84,8 @@ test('POST duplicate username /user', async () => {
         })
 })
 
-test(`GET /user that is an author /user/:userid`, async () => {
-    const response = await request(app).post('/user').type('form').send({
+test(`GET /users that is an author /users/:userid`, async () => {
+    const response = await request(app).post('/users').type('form').send({
         firstname: 'john',
         lastname: 'nguyen',
         username: 'kazuha5',
@@ -94,7 +94,7 @@ test(`GET /user that is an author /user/:userid`, async () => {
         author: true,
     })
     const user = response.body
-    const response2 = await request(app).get('/user/' + user.id)
+    const response2 = await request(app).get('/users/' + user.id)
     expect(response.status).toEqual(200)
     expect(response2.body).toHaveProperty('id')
     expect(response2.body).toHaveProperty('username')
@@ -102,8 +102,8 @@ test(`GET /user that is an author /user/:userid`, async () => {
     expect(response2.body).toHaveProperty('author')
 })
 
-test(`GET /user that's not a author /user/:userid`, async () => {
-    const response = await request(app).post('/user').type('form').send({
+test(`GET /users that's not a author /users/:userid`, async () => {
+    const response = await request(app).post('/users').type('form').send({
         firstname: 'john',
         lastname: 'nguyen',
         username: 'kazuha6',
@@ -112,7 +112,7 @@ test(`GET /user that's not a author /user/:userid`, async () => {
         author: false,
     })
     const user = response.body
-    const response2 = await request(app).get('/user/' + user.id)
+    const response2 = await request(app).get('/users/' + user.id)
     expect(response.status).toEqual(200)
     expect(response2.body).toHaveProperty('id')
     expect(response2.body).toHaveProperty('username')
@@ -120,7 +120,7 @@ test(`GET /user that's not a author /user/:userid`, async () => {
     expect(response2.body).toHaveProperty('author', null)
 })
 
-test('POST /user should have hashed password', async () => {
+test('POST /users should have hashed password', async () => {
     const form = {
         firstname: 'john',
         lastname: 'nguyen',
@@ -129,7 +129,7 @@ test('POST /user should have hashed password', async () => {
         password: '123',
         author: false,
     }
-    const response = await request(app).post('/user').type('form').send(form)
+    const response = await request(app).post('/users').type('form').send(form)
     const user = response.body
     expect(response.status).toEqual(200)
     expect(response.status).toEqual(200)
@@ -138,5 +138,5 @@ test('POST /user should have hashed password', async () => {
     ).toBeTruthy()
 })
 
-test.skip('update user /user/:userid', async () => {})
-test.skip('delete user /user/:userid', async () => {})
+test.skip('update user /users/:userid', async () => {})
+test.skip('delete user /users/:userid', async () => {})

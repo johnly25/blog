@@ -1,10 +1,9 @@
 import express from 'express'
 import UserService from '../services/userService'
-import * as repository from '../prisma/repository'
+import * as repository from '../db/repository'
 import * as bcrypt from '../services/bcryptService'
 import 'express-async-errors'
 const userService = new UserService(repository)
-
 const router = express.Router()
 
 router.post('/', async (req, res) => {

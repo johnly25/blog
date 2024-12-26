@@ -3,6 +3,22 @@ export default class UserService {
     constructor(repository) {
         this.repository = repository
     }
+
+    async getPosts(authorid: number) {
+        const posts = await this.repository.getPosts(authorid)
+        return posts
+    }
+
+    async createPost(authorid: any, title: any, body: any, published: boolean) {
+        const post = await this.repository.createPost(
+            authorid,
+            title,
+            body,
+            published,
+        )
+        return post
+    }
+
     async addAuthor(userid: number) {
         const user = await this.repository.addAuthor(userid)
         return user
