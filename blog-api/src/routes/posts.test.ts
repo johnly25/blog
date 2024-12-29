@@ -36,7 +36,7 @@ describe('persistence agent', async () => {
         expect(response.body).toHaveProperty('published')
     })
 
-    test('GET /posts', async () => {
+    test('POST /posts', async () => {
         await loginUser(agent1)
         await agent1.post(`/posts`).send({
             title: 'first',
@@ -79,6 +79,26 @@ describe('persistence agent', async () => {
         expect(response.body).toHaveProperty('message', 'Need to be an author')
     })
 
+    test('GET /post:/:postsid', async () => {
+        await loginUser(agent1)
+        const response1 = await agent1.post(`/posts`).send({
+            title: 'first',
+            body: 'hello my first post',
+            published: 'true',
+        })
+        const post = response1.body
+        const response = await agent1.get(`/posts/${post.id}`)
+        expect(response.body).toHaveProperty('title')
+        expect(response.body).toHaveProperty('body')
+
+    })
+
+    test(`GET /posts:/:postsid that's doesn't exist in DB`, async () => {
+        await loginUser(agent1)
+        const response = await agent1.get(`/posts/-1`)
+        expect(response.body).toMatchObject({})
+    })
+
     test('PUT /posts/:postid', async () => {
         await loginUser(agent1)
         const response1 = await agent1.post(`/posts`).send({
@@ -86,11 +106,31 @@ describe('persistence agent', async () => {
             body: 'hello my first post',
             published: 'true',
         })
-        console.log(response1.body)
-        const resposne = await agent.post(`/posts/`)
-
+        const post = response1.body
+        const response2 = await agent1.put(`/posts/${post.id}`).send({
+            title: 'editing first',
+            body: 'editing hello my first post',
+            published: 'true',
+        })
+        expect(response2.body).toHaveProperty('title', 'editing first')
+        expect(response2.body).toHaveProperty(
+            'body',
+            'editing hello my first post',
+        )
+        expect(response2.body).toHaveProperty('published', true)
     })
-    // test.skip('DELETE /posts/:postid', () => { })
+    test('DELETE /posts/:postid', async () => {
+        await loginUser(agent1)
+        const response1 = await agent1.post(`/posts`).send({
+            title: 'first',
+            body: 'hello my first post',
+            published: 'true',
+        })
+        const post = response1.body
+        const postid = post.id
+        const response2 = await agent1.delete(`/posts/${postid}`)
+        expect(response2.body).toMatchObject(response1.body)
+     })
 })
 const loginUser = async agent1 => {
     await agent1.post(`/users`).type('form').send({

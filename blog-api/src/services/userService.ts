@@ -1,12 +1,39 @@
 export default class UserService {
+
     repository
     constructor(repository) {
         this.repository = repository
     }
 
+    async deletePost(authorid: number, postid: number) {
+        const post = await this.repository.deletePost(authorid, postid)
+        return post
+    }
+
+    async updatePost(
+        authorid: number,
+        postid: number,
+        title: any,
+        body: any,
+        published: boolean,
+    ) {
+        const post = await this.repository.updatePost(
+            authorid,
+            postid,
+            title,
+            body,
+            published,
+        )
+        return post
+    }
     async getPosts(authorid: number) {
         const posts = await this.repository.getPosts(authorid)
         return posts
+    }
+
+    async getPost(postid) {
+        const post = await this.repository.getPost(postid)
+        return post
     }
 
     async createPost(authorid: any, title: any, body: any, published: boolean) {

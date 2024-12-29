@@ -21,8 +21,27 @@ router.post('/', async (req: any, res) => {
     res.send(post)
 })
 
-router.get('/:postid', async (req, res) => { })
-router.put('/:postid', async (req, res) => { })
-router.delete('/:postid', async (req, res) => { })
+router.get('/:postid', async (req, res) => {
+    const postid = Number(req.params.postid)
+    const post = await userService.getPost(postid)
+    res.send(post)
+})
+
+router.put('/:postid', async (req, res) => {
+    const { title, body } = req.body
+    const published = req.body.published === 'true'
+    const postid = Number(req.params.postid)
+    const authorid = Number(req.user.author.id)
+    const post = await userService.updatePost(authorid, postid, title, body, published)
+    res.send(post)
+
+})
+
+router.delete('/:postid', async (req, res) => {
+    const postid = Number(req.params.postid)
+    const authorid = Number(req.user.author.id)
+    const post = await userService.deletePost(authorid, postid)
+    return res.send(post)
+})
 
 export default router

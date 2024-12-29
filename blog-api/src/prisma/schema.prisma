@@ -38,6 +38,7 @@ model Post {
   createdAt DateTime @default(now())
   authorid  Int
   author    Author   @relation(fields: [authorid], references: [id])
+  Comment Comment[]
 }
 
 model Comment {
@@ -46,6 +47,8 @@ model Comment {
   createdAt DateTime @default(now())
   userid    Int
   user      User     @relation(fields: [userid], references: [id])
+  postid Int 
+  post Post @relation(fields: [postid], references: [id])
 }
 
 model Session {

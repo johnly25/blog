@@ -21,11 +21,20 @@ export const clearDB = async () => {
     await prisma.comment.deleteMany()
 }
 
-export const getPosts = async (authorid) => {
+export const getPosts = async authorid => {
     const posts = await prisma.post.findMany({
-        where: { authorid }
+        where: { authorid },
     })
     return posts
+}
+
+export const getPost = async postid => {
+    const post = await prisma.post.findFirst({
+        where: {
+            id: postid,
+        },
+    })
+    return post
 }
 export const createPost = async (authorid, title, body, published) => {
     const post = await prisma.post.create({
@@ -34,6 +43,30 @@ export const createPost = async (authorid, title, body, published) => {
             body: body,
             published: published,
             authorid: authorid,
+        },
+    })
+    return post
+}
+export const deletePost = async (authorid, postid) => {
+    const post = await prisma.post.delete({
+        where: {
+            authorid: authorid,
+            id: postid,
+        },
+    })
+    return post
+}
+
+export const updatePost = async (authorid, postid, title, body, published) => {
+    const post = await prisma.post.update({
+        where: {
+            authorid: authorid,
+            id: postid,
+        },
+        data: {
+            title,
+            body,
+            published,
         },
     })
     return post

@@ -48,7 +48,7 @@ describe('persistent agent', () => {
     const agent1 = request.agent()
     const agent2 = request.agent()
 
-    test('testing', async () => {
+    test('POST testing', async () => {
         const res = await agent1.post(`${base}/users`).type('form').send({
             firstname: 'john',
             lastname: 'nguyen',
