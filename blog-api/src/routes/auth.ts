@@ -1,6 +1,6 @@
 import express from 'express'
 import 'express-async-errors'
-import passport from 'passport'
+import { authenticateUser } from '../middleware/authUser'
 const router = express.Router()
 
 router.get('/', (req, res) => {
@@ -18,13 +18,12 @@ router.get('/login/password', (req, res) => {
     res.send('logging in GET')
 })
 
-router.post(
-    '/login/password',
-    passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/failure',
-    }),
-)
+router.get('/failure', (req, res) => {
+    console.log('in failure')
+    res.send('failure route')
+})
+
+router.post('/login/password', authenticateUser)
 
 router.post('/logout', function (req, res, next) {
     req.logout(err => {

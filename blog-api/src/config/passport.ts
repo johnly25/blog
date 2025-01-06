@@ -1,15 +1,13 @@
 import { Strategy as LocalStrategy } from 'passport-local'
 import { comparePassword } from '../services/bcryptService'
-
-import { PrismaClient } from '@prisma/client'
 import passport from 'passport'
 import * as repository from '../db/repository'
-const prisma = new PrismaClient()
 
 passport.use(
     new LocalStrategy(async (username, password, done) => {
         try {
             const user = await repository.getUserByUsername(username)
+            // console.log('user conifg', user)
             if (!user) {
                 return done(null, false, { message: 'Incorrect username.' })
             }

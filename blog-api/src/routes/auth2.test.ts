@@ -15,7 +15,7 @@ describe('persistent agent', () => {
     const server1 = request.agent(app)
     const server2 = request.agent(app)
 
-    test('testing', async () => {
+    test('testing login', async () => {
         const res = await server1.post(`/users`).type('form').send({
             firstname: 'john',
             lastname: 'nguyen',
@@ -25,8 +25,40 @@ describe('persistent agent', () => {
             author: 'false',
         })
         const res2 = await server1
-            .post(`/login/password`)
+            .post(`/auth/login/password`)
             .send({ username: 'kazuha', password: '123' })
+        console.log(res2.body)
+    })
+
+    test('testing logout', async () => {
+        await server1.post(`/users`).type('form').send({
+            firstname: 'john',
+            lastname: 'nguyen',
+            username: 'kazuha',
+            email: 'jayennguyen@gmail.com',
+            password: '123',
+            author: 'false',
+        })
+        await server1
+            .post(`/auth/login/password`)
+            .send({ username: 'kazuha', password: '123' })
+
+        const res = await server1.post(`/auth/logout`)
+        console.log(res.body)
+    })
+    test('testing wrong login', async () => {
+        const res = await server1.post(`/users`).type('form').send({
+            firstname: 'john',
+            lastname: 'nguyen',
+            username: 'kazuha',
+            email: 'jayennguyen@gmail.com',
+            password: '123',
+            author: 'false',
+        })
+        const res2 = await server1
+            .post(`/auth/login/password`)
+            .send({ username: 'kazuha1', password: '1234' })
+        console.log(res2.text)
     })
 
     test('testing agent2', async () => {
@@ -39,7 +71,7 @@ describe('persistent agent', () => {
             author: 'false',
         })
         const res2 = await server2
-            .post(`/login/password`)
+            .post(`/auth/login/password`)
             .send({ username: 'kazuha2', password: '123' })
     })
 })

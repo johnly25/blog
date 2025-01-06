@@ -6,7 +6,6 @@ import * as repository from '../db/repository'
 const userService = new UserService(repository)
 const router = express.Router()
 
-
 router.get('/', async (req: any, res) => {
     const authorid = Number(req.user.author.id)
     const posts = await userService.getPosts(authorid)
@@ -27,17 +26,22 @@ router.get('/:postid', async (req, res) => {
     res.send(post)
 })
 
-router.put('/:postid', async (req, res) => {
+router.put('/:postid', async (req: any, res) => {
     const { title, body } = req.body
     const published = req.body.published === 'true'
     const postid = Number(req.params.postid)
     const authorid = Number(req.user.author.id)
-    const post = await userService.updatePost(authorid, postid, title, body, published)
+    const post = await userService.updatePost(
+        authorid,
+        postid,
+        title,
+        body,
+        published,
+    )
     res.send(post)
-
 })
 
-router.delete('/:postid', async (req, res) => {
+router.delete('/:postid', async (req: any, res) => {
     const postid = Number(req.params.postid)
     const authorid = Number(req.user.author.id)
     const post = await userService.deletePost(authorid, postid)

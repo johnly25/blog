@@ -58,7 +58,7 @@ describe('persistent agent', () => {
             author: 'false',
         })
         const res2 = await agent1
-            .post(`${base}/login/password`)
+            .post(`${base}/auth/login/password`)
             .send({ username: 'kazuha', password: '123' })
     })
 
@@ -72,7 +72,7 @@ describe('persistent agent', () => {
             author: 'false',
         })
         const res2 = await agent2
-            .post(`${base}/login/password`)
+            .post(`${base}/auth/login/password`)
             .send({ username: 'kazuha2', password: '123' })
     })
 })

@@ -15,11 +15,12 @@ afterAll(async () => {
 
 describe('persistence agent', async () => {
     const agent1 = request.agent(app)
-    const agent2 = request.agent(app)
 
     test('user is logged in', async () => {
         await loginUser(agent1)
+
         const response = await agent1.get(`/`)
+        // console.log(response.body)
         expect(response.body).toHaveProperty('id')
         expect(response.body).toHaveProperty('author')
     })
@@ -58,7 +59,6 @@ describe('persistence agent', async () => {
                 expect.objectContaining({
                     title: 'first',
                     body: 'hello my first post',
-
                 }),
                 expect.objectContaining({
                     title: 'second',
@@ -90,7 +90,6 @@ describe('persistence agent', async () => {
         const response = await agent1.get(`/posts/${post.id}`)
         expect(response.body).toHaveProperty('title')
         expect(response.body).toHaveProperty('body')
-
     })
 
     test(`GET /posts:/:postsid that's doesn't exist in DB`, async () => {
@@ -130,10 +129,11 @@ describe('persistence agent', async () => {
         const postid = post.id
         const response2 = await agent1.delete(`/posts/${postid}`)
         expect(response2.body).toMatchObject(response1.body)
-     })
+    })
 })
+
 const loginUser = async agent1 => {
-    await agent1.post(`/users`).type('form').send({
+    const response = await agent1.post(`/users`).type('form').send({
         firstname: 'john',
         lastname: 'nguyen',
         username: 'kazuha',
@@ -142,8 +142,8 @@ const loginUser = async agent1 => {
         author: 'true',
     })
 
-    await agent1
-        .post(`/login/password`)
+    const response2 = await agent1
+        .post(`/auth/login/password`)
         .send({ username: 'kazuha', password: '123' })
 }
 
@@ -158,6 +158,6 @@ const logUserNotAuthor = async agent2 => {
     })
 
     await agent2
-        .post(`/login/password`)
+        .post(`/auth/login/password`)
         .send({ username: 'kazuha2', password: '123' })
 }

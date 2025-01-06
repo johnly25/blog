@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import 'dotenv/config'
+import { connect } from 'http2'
+import { post } from 'superagent'
 
 const databaseUrl =
     process.env.NODE_ENV === 'test'
@@ -15,10 +17,10 @@ const prisma = new PrismaClient({
 })
 
 export const clearDB = async () => {
+    await prisma.comment.deleteMany()
     await prisma.post.deleteMany()
     await prisma.author.deleteMany()
     await prisma.user.deleteMany()
-    await prisma.comment.deleteMany()
 }
 
 export const getPosts = async authorid => {
@@ -123,4 +125,72 @@ export const addAuthor = async (userid: number) => {
         },
     })
     return user
+}
+
+export const createComment = async (userid, postid, commentBody) => {
+    const comment = await prisma.comment.create({
+        data: {
+            body: commentBody,
+            user: {
+                connect: {
+                    id: userid,
+                },
+            },
+            post: {
+                connect: {
+                    id: postid,
+                },
+            },
+        },
+        include: {
+            post: true,
+            user: true,
+        },
+    })
+    return comment
+}
+
+export const createComment2 = async (userid, postid, commentBody) => {
+    const comment = await prisma.comment.create({
+        data: {
+            body: commentBody,
+            userid: userid,
+            postid: postid,
+        },
+        include: {
+            post: true,
+            user: true,
+        },
+    })
+    return comment
+}
+
+export const getComments = async (postid: number) => {
+    const comments = await prisma.comment.findMany({
+        where: {
+            postid: postid,
+        },
+    })
+    return comments
+}
+
+export const updateComment = async (commentid, commentBody) => {
+    const comment = await prisma.comment.update({
+        where: {
+            id: commentid,
+        },
+        data: {
+            body: commentBody,
+        },
+    })
+    return comment
+}
+
+export const deleteComment = async commentid => {
+    const comment = await prisma.comment.delete({
+        where: {
+            id: commentid,
+        },
+    })
+    return comment
 }

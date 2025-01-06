@@ -5,7 +5,6 @@ import app from '../app-loader'
 import request from 'superagent'
 import http from 'http'
 
-
 beforeEach(async () => {
     await clearDB()
 })
@@ -41,9 +40,9 @@ describe('persistent agent', () => {
             password: '123',
             author: 'false',
         })
-        
+
         await agent1
-            .post(`${base}/login/password`)
+            .post(`${base}/auth/login/password`)
             .send({ username: 'kazuha', password: '123' })
         const response = await agent1.get(`${base}/`)
     })
@@ -56,9 +55,9 @@ describe('persistent agent', () => {
             password: '123',
             author: 'false',
         })
-        
+
         const res2 = await agent2
-            .post(`${base}/login/password`)
+            .post(`${base}/auth/login/password`)
             .send({ username: 'kazuha2', password: '123' })
     })
 })

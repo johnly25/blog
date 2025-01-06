@@ -1,5 +1,4 @@
 export default class UserService {
-
     repository
     constructor(repository) {
         this.repository = repository
