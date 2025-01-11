@@ -19,7 +19,6 @@ router.get('/login/password', (req, res) => {
 })
 
 router.get('/failure', (req, res) => {
-    console.log('in failure')
     res.send('failure route')
 })
 

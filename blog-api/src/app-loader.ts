@@ -2,6 +2,7 @@
 import express from 'express'
 import session from './config/session'
 import passport from './config/passport'
+import { authenticateJWT } from './middleware/jwtAuth'
 import indexRouter from './routes/index'
 import userRouter from './routes/users'
 import authRouter from './routes/auth'
@@ -29,8 +30,13 @@ app.use((req, res, next) => {
     next()
 })
 app.use('/users', router.userRouter)
-app.use('/posts', checkAuthor, router.postRouter)
-app.use('/comments', router.commentRouter)
+app.use(
+    '/posts',
+    passport.authenticate('jwt', { failureMessage: true }),
+    checkAuthor,
+    router.postRouter,
+)
+app.use('/comments', passport.authenticate('jwt', { failureMessage: true }), router.commentRouter)
 app.use('/auth', router.authRouter)
 app.use('/', indexRouter)
 

@@ -1,20 +1,20 @@
-import { PrismaClient } from '@prisma/client'
-import 'dotenv/config'
-import { connect } from 'http2'
-import { post } from 'superagent'
+// import 'dotenv/config'
+// import { PrismaClient } from '@prisma/client'
 
-const databaseUrl =
-    process.env.NODE_ENV === 'test'
-        ? process.env.DEV_DATABASE_URL
-        : process.env.DATABASE_URL
+// const databaseUrl =
+//     process.env.NODE_ENV === 'test'
+//         ? process.env.DEV_DATABASE_URL
+//         : process.env.DATABASE_URL
 
-const prisma = new PrismaClient({
-    datasources: {
-        db: {
-            url: databaseUrl,
-        },
-    },
-})
+// const prisma = new PrismaClient({
+//     datasources: {
+//         db: {
+//             url: databaseUrl,
+//         },
+//     },
+// })
+import { PrismaSingleton } from '../services/prismaClientSingleton'
+const prisma = new PrismaSingleton()
 
 export const clearDB = async () => {
     await prisma.comment.deleteMany()

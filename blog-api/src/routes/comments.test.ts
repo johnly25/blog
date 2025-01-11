@@ -2,7 +2,7 @@ import { test, expect, afterAll, beforeEach, beforeAll, describe } from 'vitest'
 import { clearDB } from 'src/db/repository'
 import app from '../app-loader'
 import request from 'supertest'
-
+import { loginUser, logUserNotAuthor } from 'src/utils/testingUtils'
 //supertest you can send the app
 //superagent you need to setup servers
 beforeAll(async () => {
@@ -13,45 +13,8 @@ afterAll(async () => {
     await clearDB()
 })
 
-const loginUser = async agent1 => {
-    await agent1.post(`/users`).type('form').send({
-        firstname: 'john',
-        lastname: 'nguyen',
-        username: 'kazuha',
-        email: 'jayennguyen@gmail.com',
-        password: '123',
-        author: 'true',
-    })
-
-    await agent1
-        .post(`/auth/login/password`)
-        .send({ username: 'kazuha', password: '123' })
-}
-
-const logUserNotAuthor = async agent2 => {
-    await agent2.post(`/users`).type('form').send({
-        firstname: 'john',
-        lastname: 'nguyen',
-        username: 'kazuha2',
-        email: 'jayennguyen@gmail.com',
-        password: '123',
-        author: 'false',
-    })
-
-    await agent2
-        .post(`/auth/login/password`)
-        .send({ username: 'kazuha2', password: '123' })
-}
-
 describe('persistence agent', async () => {
     const agent1 = request.agent(app)
-
-    test('user is logged in', async () => {
-        await loginUser(agent1)
-        const response = await agent1.get(`/`)
-        expect(response.body).toHaveProperty('id')
-        expect(response.body).toHaveProperty('author')
-    })
 
     test('GET /:postid', async () => {
         await loginUser(agent1)
@@ -119,7 +82,6 @@ describe('persistence agent', async () => {
         const response3 = await agent1.put(`/comments/${commentid}`).send({
             body: 'edited first comment',
         })
-        console.log(response3.body)
         expect(response3.body).toHaveProperty('body', 'edited first comment')
     })
 

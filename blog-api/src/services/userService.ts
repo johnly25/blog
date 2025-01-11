@@ -71,6 +71,4 @@ export default class UserService {
         const user = await this.repository.getUser(userid)
         return user
     }
-    // update user
-    // delete user
 }

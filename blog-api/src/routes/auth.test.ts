@@ -1,55 +1,28 @@
 /* eslint-disable prettier/prettier */
 import { test, expect, afterAll, beforeEach, beforeAll, describe } from 'vitest'
-import { PrismaClient } from '@prisma/client'
 import app from '../app-loader'
-import request from 'superagent'
-import http from 'http'
-
-const prisma = new PrismaClient({
-    datasources: {
-        db: {
-            url: process.env.DEV_DATABASE_URL,
-        },
-    },
-})
-
-const clearDB = async () => {
-    await prisma.author.deleteMany()
-    await prisma.user.deleteMany()
-    await prisma.post.deleteMany()
-    await prisma.comment.deleteMany()
-}
-
-beforeEach(async () => {
-    await clearDB()
-})
-
-let base = 'http://localhost'
-let server
-
-//dynamically create servers
-//inconsistent for tests
-beforeAll(() => {
-    server = http.createServer(app)
-    server = server.listen(0, () => {
-        base += `:${server.address().port}`
-    })
-})
-
-afterAll(() => {
-    server.close()
-})
+import request from 'supertest'
+import { clearDB } from 'src/db/repository'
+import { loginUser, logUserNotAuthor } from '../utils/testingUtils'
 
 beforeAll(async () => {
     await clearDB()
 })
 
 describe('persistent agent', () => {
-    const agent1 = request.agent()
-    const agent2 = request.agent()
+    // this way works but it doesn't show the console logs and response body
+    // it's because the original request doesn't return a json
+    // 3rd way to to create 3 development servers and tests the routes individualls but that takes way to long
+    const server1 = request.agent(app)
+    const server2 = request.agent(app)
 
-    test('POST testing', async () => {
-        const res = await agent1.post(`${base}/users`).type('form').send({
+    test('testing login', async () => {
+        const response = await loginUser(server1)
+        expect(response.body).toHaveProperty('token')
+    })
+
+    test('testing logout', async () => {
+        await server1.post(`/users`).type('form').send({
             firstname: 'john',
             lastname: 'nguyen',
             username: 'kazuha',
@@ -57,13 +30,30 @@ describe('persistent agent', () => {
             password: '123',
             author: 'false',
         })
-        const res2 = await agent1
-            .post(`${base}/auth/login/password`)
+
+        await server1
+            .post(`/auth/login/password`)
             .send({ username: 'kazuha', password: '123' })
+        const res = await server1.post(`/auth/logout`)
+    })
+
+    test('testing wrong login', async () => {
+        const res = await server1.post(`/users`).type('form').send({
+            firstname: 'john',
+            lastname: 'nguyen',
+            username: 'kazuha',
+            email: 'jayennguyen@gmail.com',
+            password: '123',
+            author: 'false',
+        })
+        const res2 = await server1
+            .post(`/auth/login/password`)
+            .send({ username: 'kazuha1', password: '1234' })
+        expect(res2.body).toHaveProperty('message', 'Incorrect username.')
     })
 
     test('testing agent2', async () => {
-        const res = await agent2.post(`${base}/users`).type('form').send({
+        const res = await server2.post(`/users`).type('form').send({
             firstname: 'john',
             lastname: 'nguyen',
             username: 'kazuha2',
@@ -71,8 +61,8 @@ describe('persistent agent', () => {
             password: '123',
             author: 'false',
         })
-        const res2 = await agent2
-            .post(`${base}/auth/login/password`)
+        const res2 = await server2
+            .post(`/auth/login/password`)
             .send({ username: 'kazuha2', password: '123' })
     })
 })
