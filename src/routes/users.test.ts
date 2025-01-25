@@ -32,6 +32,7 @@ test('POST a /users', async () => {
         password: '123',
         author: 'false',
     })
+    console.log(response.body)
     expect(response.body).toHaveProperty('id')
     expect(response.body).toHaveProperty('username')
     expect(response.body).toHaveProperty('fullname')

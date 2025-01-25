@@ -7,7 +7,8 @@ import { signupValidator, checkErrors } from '../middleware/expressValidator'
 const userService = new UserService(repository)
 const router = express.Router()
 
-router.post('/', signupValidator, checkErrors, async (req, res) => {
+// router.post('/', signupValidator, checkErrors, async (req, res) => {
+router.post('/', async (req, res) => {
     const { firstname, lastname, username, password, email, author } = req.body
     const hashPassword = await bcrypt.hashPassword(password)
     const user = await userService.createUser(

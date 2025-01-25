@@ -1,9 +1,0 @@
-curl -X POST -H "Content-Type:application/json" http://localhost:3000/user -d '{ "firstname": "johnny", "lastname": "nguyen", "username": "kazuha", "email": "jayennguyen@gmail.com", "password": "123", "author": "false"}'
-curl -X POST -H "Content-Type:application/json" http://localhost:3000/login/password -d '{"username":"kazuha", "password": "123"}'
-curl -X POST -H "Content-Type:application/json" http://localhost:3000/login/password -d '{"username":"kazuha", "password": "1234"}'
-
-curl -X POST http://localhost:3000/logout
-curl http://localhost:3000/login/password
-curl http://localhost:3000/login
-curl http://localhost:3000/
-

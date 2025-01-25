@@ -15,6 +15,7 @@ afterAll(async () => {
 
 describe('persistence agent', async () => {
     const agent1 = request.agent(app)
+    
     test('user is logged in', async () => {
         await loginUser(agent1)
         const response = await agent1.get(`/`)

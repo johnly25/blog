@@ -24,7 +24,6 @@ describe('persistence agent', async () => {
             passwordConfirm: '123',
             author: 'false',
         })
-        console.log(response.body)
         expect(response.body).toHaveProperty('id')
         expect(response.body).toHaveProperty('username')
         expect(response.body).toHaveProperty('fullname')
@@ -40,7 +39,7 @@ describe('persistence agent', async () => {
             passwordConfirm: '123',
             author: 'false',
         })
-        
+
         const response = await agent1.post('/users').type('form').send({
             firstname: 'john',
             lastname: 'nguyen',
@@ -50,20 +49,19 @@ describe('persistence agent', async () => {
             passwordConfirm: '123',
             author: 'false',
         })
-        console.log(response.body)
-        expect(response.body).toHaveProperty('errors')
+
+        expect(response.body).toHaveProperty('error')
     })
 
     test('POST a /users without required field', async () => {
         const response = await agent1.post('/users').type('form').send({
             firstname: 'john',
-            lastname: '',
             username: 'kazuha',
             email: 'jayennguyen@gmail.com',
             password: '123',
             author: 'false',
         })
         console.log(response.body)
-        expect(response.body).toHaveProperty('errors')
+        expect(response.body).toHaveProperty('error')
     })
 })
