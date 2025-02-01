@@ -2,7 +2,6 @@
 import express from 'express'
 import session from './config/session'
 import passport from './config/passport'
-import { authenticateJWT } from './middleware/jwtAuth'
 import indexRouter from './routes/index'
 import userRouter from './routes/users'
 import authRouter from './routes/auth'
